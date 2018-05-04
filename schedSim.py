@@ -55,7 +55,6 @@ def schedSim():
     parser.add_argument("-q", help="quantam time", type=int)
     args = parser.parse_args()
     algorithm = args.p
-    quantam = args.q
 
     # Open jobs file
     with open(args.jobsFilePath, 'r') as jobsFile:
@@ -70,7 +69,7 @@ def schedSim():
             totalRunTime += runTime
 
         # Sort jobs based on arrival, then lineNum
-        jobs.sort(key=lambda job: (job.arrivalTime, job.jobNum))
+        jobs.sort(key=lambda job: (job.arrivalTime, job.lineNum))
         for num, job in enumerate(jobs):
             job.setJobNum(num)
             print job.__str__()
@@ -88,7 +87,6 @@ def schedSim():
                     running.setStartTime(cycle)
                 if running is not None:
                     running.remainingCycles -= 1
-                print "Cycle: " + str(cycle) + " Job: " + str(running.jobNum)
                 if running.remainingCycles == 0:
                     running.setFinishTime(cycle+1)
                     finished.append(running)
@@ -96,7 +94,6 @@ def schedSim():
             printOutput(finished)
 
         elif algorithm == "SRJN":
-            print "SRJN"
             queuedJobs = []
             for cycle in range(totalRunTime):
                 for job in jobs:
@@ -113,7 +110,6 @@ def schedSim():
                         if queuedJob.pauseCycles >= 0:
                             queuedJob.pauseCycles += 1
                 if running is not None:
-                    print "Cycle: " + str(cycle) + " Job: " + str(running.jobNum)
                     running.remainingCycles -= 1;
                     if running.remainingCycles == 0:
                         running.setFinishTime(cycle+1)
@@ -121,6 +117,42 @@ def schedSim():
                         finished.append(running)
             finished.sort(key=lambda x: (x.jobNum))
             printOutput(finished)
+        elif algorithm == "RR":
+            print "RR"
+            quantam = 1 if args.q is None else args.q
+            runningJobs = []
+            runningIndex = 0
+            quantamCycle = 1
+
+            for cycle in range(totalRunTime):
+                for job in jobs:
+                    if job.arrivalTime == cycle:
+                        runningJobs.append(job)
+                if len(runningJobs) > 0:
+                    if quantamCycle % (quantam + 1) == 0:
+                        runningIndex = (runningIndex + 1) % len(runningJobs)
+                        quantamCycle = 1
+                    running = runningJobs[runningIndex]
+                    for index, runningJob in enumerate(runningJobs):
+                        if index == runningIndex:
+                            continue
+                        runningJob.pauseCycles += 1
+                    if running.startTime < 0:
+                        running.setStartTime(cycle)
+                if running is not None:
+                    print "Cycle: " + str(cycle) + " Job: " + str(running.jobNum)
+                    running.remainingCycles -= 1
+                    quantamCycle += 1
+                    if running.remainingCycles == 0:
+                        running.setFinishTime(cycle+1)
+                        runningJobs.remove(running)
+                        finished.append(running)
+                        quantamCycle = 1
+                        if len(runningJobs) > 0:
+                            runningIndex = (runningIndex) % len(runningJobs)
+            finished.sort(key=lambda x: (x.jobNum))
+            printOutput(finished)
+
 
 
 
