@@ -72,7 +72,7 @@ def schedSim():
         jobs.sort(key=lambda job: (job.arrivalTime, job.lineNum))
         for num, job in enumerate(jobs):
             job.setJobNum(num)
-            print job.__str__()
+            # print job.__str__()
 
         running = None
         finished = []
@@ -118,7 +118,6 @@ def schedSim():
             finished.sort(key=lambda x: (x.jobNum))
             printOutput(finished)
         elif algorithm == "RR":
-            print "RR"
             quantam = 1 if args.q is None else args.q
             runningJobs = []
             runningIndex = 0
@@ -140,7 +139,7 @@ def schedSim():
                     if running.startTime < 0:
                         running.setStartTime(cycle)
                 if running is not None:
-                    print "Cycle: " + str(cycle) + " Job: " + str(running.jobNum)
+                    # print "Cycle: " + str(cycle) + " Job: " + str(running.jobNum)
                     running.remainingCycles -= 1
                     quantamCycle += 1
                     if running.remainingCycles == 0:

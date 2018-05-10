@@ -1,0 +1,21 @@
+Austin McInnis (amcinnis)
+
+I wrote the program to match the output of the test cases. The one test case that doesn't match is test2RR1.out, which I believe is a faulty test case.
+
+
+1. For what types of workloads does SRJN deliver the same turnaround times as FIFO?
+
+SRJN delivers similar turnaround times as FIFO when each job that is scheduled is the same size. SRJN also delivers similiar turnaround times when each job arriving is increasing in size.
+
+2. For what types of workloads and quantum lengths does SRJN deliver the same response times as RR?
+
+SRJN will deliver the same response times as RR when the quantam is greater than or equal to the largest job being scheduled. Again, this also happens when the scheduled jobs increase in size.
+
+3. What happens to response time with SRJN as job lengths increase? Can you use the simulator to demonstrate the trend?
+
+As job lengths increase, response time also increase. This can be demonstrated in the simulator by increasing job sizes in the input file, and noting the turnaround times.
+
+4. What happens to response time with RR as quantum lengths increase? Can you write an equation that gives the worst-case response time, given N jobs?
+
+As quantam lengths increase, response times also increase. This is because the amount of time RR spends on each process is longer, therefore every waiting process has to wait longer before being executed again.
+In a worst case scenario, a process will have to wait (quantam size) * N-1 for this process to be executed again.
